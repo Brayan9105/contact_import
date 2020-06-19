@@ -35,7 +35,7 @@ ActiveRecord::Schema.define(version: 2020_06_18_225957) do
 
   create_table "books", force: :cascade do |t|
     t.string "filename"
-    t.integer "status"
+    t.integer "status", default: 0
     t.integer "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

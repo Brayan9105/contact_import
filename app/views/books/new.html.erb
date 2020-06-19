@@ -1,0 +1,8 @@
+<h1>Books#new</h1>
+<p>Find me in app/views/books/new.html.erb</p>
+
+<%= form_with model: @book do |f| %>
+  <%= f.label :file %>
+  <%= f.file_field :file %><br>
+  <%= f.submit %>
+<% end %>
