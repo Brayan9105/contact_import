@@ -1,7 +1,17 @@
-<h1>Books#new</h1>
-<p>Find me in app/views/books/new.html.erb</p>
-
 <%= form_with model: @book do |f| %>
+
+<% if @book.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(@book.errors.count, "error") %> prohibited this book from being saved:</h2>
+
+    <ul>
+      <% @book.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
   <%= f.label :file %>
   <%= f.file_field :file %><br>
   <%= f.submit %>
