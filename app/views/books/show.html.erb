@@ -12,3 +12,42 @@
 <p>
   <%= @book.file.content_type %>
 </p>
+
+<p>
+  <%= (@book.file.filename).to_s.downcase %>
+</p>
+
+
+<%= form_with url: processing_path(@book), method: 'GET' do |f| %>
+  <div>
+    <%= f.label :name %>
+    <%= f.text_field :name %>
+  </div>
+  <div>
+    <%= f.label :date %>
+    <%= f.text_field :date %>
+  </div>
+  <div>
+    <%= f.label :phone %>
+    <%= f.text_field :phone %>
+  </div>
+  <div>
+    <%= f.label :address %>
+    <%= f.text_field :address %>
+  </div>
+  <div>
+    <%= f.label :credit_card %>
+    <%= f.text_field :credit_card %>
+  </div>
+  <div>
+    <%= f.label :franchise %>
+    <%= f.text_field :franchise %>
+  </div>
+  <div>
+    <%= f.label :email %>
+    <%= f.text_field :email %>
+  </div>
+  <div>
+    <%= f.submit %>
+  </div>
+<% end %>

@@ -4,11 +4,13 @@ class BooksController < ApplicationController
   end
 
   def index
+    @books = current_user.books
   end
 
   def create
     @book = Book.new(book_params)
     if @book.save
+      @book.add_filename
       redirect_to @book
     else
       render :new
@@ -17,6 +19,11 @@ class BooksController < ApplicationController
 
   def show
     @book = Book.find(params[:id])
+  end
+
+  def processing
+    @book = Book.find(params[:id])
+    @book.processing_file(params)
   end
 
   private
