@@ -91,6 +91,8 @@ class Book < ApplicationRecord
 
   def valid_franchise(credit_card_number)
     if credit_card_number.present?
+      $contact[:card_digit] = credit_card_number[credit_card_number.size-4..credit_card_number.size]
+
       $contact[:franchise] = case credit_card_number
         when /^5[1-5][0-9]{5,}|222[1-9][0-9]{3,}|22[3-9][0-9]{4,}|2[3-6][0-9]{5,}|27[01][0-9]{4,}|2720[0-9]{3,}$/#mastercard - 16
           'mastercard'
@@ -113,6 +115,7 @@ class Book < ApplicationRecord
       add_blank_error('franchise')
     end
 
+    $contact[:card_number] = BCrypt::Password.create(credit_card_number)
 
   end
 
@@ -121,7 +124,7 @@ class Book < ApplicationRecord
     if email.present?
       regex = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
       if email.match(regex)
-        #add_format_error('email_exists') if current_user.contacts.where(email: email).exists?
+        add_format_error('email_exists') if current_user.contacts.where(email: email).exists?
       else
         add_format_error('email')
       end
