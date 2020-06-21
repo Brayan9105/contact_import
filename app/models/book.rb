@@ -20,33 +20,29 @@ class Book < ApplicationRecord
   $contact = { errors: []}
 
   def processing_file(params)
-    # fields = ['name', 'date']#, 'phone', 'address', 'franchise', 'email']
-    # valid = true
-    # valid_contact = 0
+    fields = ['name', 'date', 'phone', 'address', 'franchise', 'email']
+    valid_contact = 0
 
-    # file = ActiveStorage::Blob.service.path_for(self.file.key)
-    # CSV.foreach(file, headers: true) do |row|
-      # $contact = { errors: []}
-    #   fields.each do |field|
-          #send("valid_#{field}", row[params["#{field}".to_sym].to_i])
+    file = ActiveStorage::Blob.service.path_for(self.file.key)
+    CSV.foreach(file, headers: true) do |row|
+      $contact = { errors: []}
 
-    #     unless valid
-    #       #call a method to create a invalid contact with error attached
-    #       break
-    #     end
-    #   end
+      fields.each do |field|
+          send("valid_#{field}", row[params["#{field}".to_sym].to_i])
+      end
 
-    #   valid_contact += 1 if valid
-    #   p '-----------------------------------'
-    # end
-    # self.terminado! if valid_contact > 0
-    
+      valid_contact += 1 if $contact[:errors].size > 0
+      p $contact
+      p '---------------------------------------------'
+    end
+    valid_contact > 0 ? self.terminado! : self.fallido!    
+    p valid_contact
   end
 
   def valid_name(name)
     $contact[:name] = name
-    if name.present? && name.match(/[!$%^&*()_+|~=`{}\[\]:";'<>?,.Ç¨\|@#¢∞¬÷“”≠´\\]/)
-      add_format_error('name')
+    if name.present? 
+      add_format_error('name') if name.match(/[!$%^&*()_+|~=`{}\[\]:";'<>?,.Ç¨\|@#¢∞¬÷“”≠´\\]/)
     else
       add_blank_error('name')
     end
@@ -67,7 +63,7 @@ class Book < ApplicationRecord
   end
 
   def valid_phone(phone)
-    contact.phone = phone
+    $contact[:phone] = phone
     if phone.present?
       regex1 = /^[\(]\+[\d]{2}[\)][ ][\d]{3}[ ][\d]{3}[ ][\d]{2}[ ][\d]{2}$/
       regex2 = /^[\(]\+[\d]{2}[\)][ ][\d]{3}[-][\d]{3}[-][\d]{2}[-][\d]{2}$/
@@ -121,9 +117,17 @@ class Book < ApplicationRecord
   end
 
   def valid_email(email)
-    contact.email = email
-    regex = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
-    email.match(regex)# && current_user.contacts.email
+    $contact[:email] = email
+    if email.present?
+      regex = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
+      if email.match(regex)
+        #add_format_error('email_exists') if current_user.contacts.where(email: email).exists?
+      else
+        add_format_error('email')
+      end
+    else
+      add_blank_error('email')
+    end
   end
 
   def add_blank_error(field)
@@ -136,6 +140,8 @@ class Book < ApplicationRecord
         $contact[:errors] << "unknow franchise"
       when 'length'
         $contact[:errors] << "invalid length of credit card number"
+      when 'email_exist'
+        $contact[:errors] << "another valid contact has this email"
       else
         $contact[:errors] << "bad format in #{field} field"
     end
