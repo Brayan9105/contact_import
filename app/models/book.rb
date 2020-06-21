@@ -17,15 +17,18 @@ class Book < ApplicationRecord
     self.save
   end
 
+  $contact = { errors: []}
+
   def processing_file(params)
-    # fields = ['name', 'date']#, 'phone', 'address', 'credit_card', 'franchise', 'email']
+    # fields = ['name', 'date']#, 'phone', 'address', 'franchise', 'email']
     # valid = true
     # valid_contact = 0
 
     # file = ActiveStorage::Blob.service.path_for(self.file.key)
     # CSV.foreach(file, headers: true) do |row|
+      # $contact = { errors: []}
     #   fields.each do |field|
-    #     valid &&= send("valid_#{field}", row[params["#{field}".to_sym].to_i])
+          #send("valid_#{field}", row[params["#{field}".to_sym].to_i])
 
     #     unless valid
     #       #call a method to create a invalid contact with error attached
@@ -41,39 +44,101 @@ class Book < ApplicationRecord
   end
 
   def valid_name(name)
-    name.match(/[!$%^&*()_+|~=`{}\[\]:";'<>?,.Ç¨\|@#¢∞¬÷“”≠´\\]/) ? false : true
+    $contact[:name] = name
+    if name.present? && name.match(/[!$%^&*()_+|~=`{}\[\]:";'<>?,.Ç¨\|@#¢∞¬÷“”≠´\\]/)
+      add_format_error('name')
+    else
+      add_blank_error('name')
+    end
   end
 
   def valid_date(date)
-    begin
-      # (Date.parse str).strftime("%Y %B %d")
-      Date.iso8601(date)
-      true 
-    rescue
-      false
+    $contact[:date] = date
+    if date.present?
+      begin
+        # (Date.parse str).strftime("%Y %B %d")
+        Date.iso8601(date)
+      rescue
+        add_format_error('date')
+      end
+    else
+      add_blank_error('date')
     end
   end
 
   def valid_phone(phone)
-    regex1 = /^[\(]\+[\d]{2}[\)][ ][\d]{3}[ ][\d]{3}[ ][\d]{2}[ ][\d]{2}$/
-    regex2 = /^[\(]\+[\d]{2}[\)][ ][\d]{3}[-][\d]{3}[-][\d]{2}[-][\d]{2}$/
-    phone.match(regex1) || phone.match(regex2) ? true : false
+    contact.phone = phone
+    if phone.present?
+      regex1 = /^[\(]\+[\d]{2}[\)][ ][\d]{3}[ ][\d]{3}[ ][\d]{2}[ ][\d]{2}$/
+      regex2 = /^[\(]\+[\d]{2}[\)][ ][\d]{3}[-][\d]{3}[-][\d]{2}[-][\d]{2}$/
+      add_format_error('phone') unless phone.match(regex1) || phone.match(regex2)
+    else
+      add_blank_error('phone')
+    end
   end
 
   def valid_address(address)
-    address.present?
+    $contact[:address] = address
+    add_blank_error('address') unless address.present?    
   end
 
-  def valid_credit_card(credit_card)
-    p "CREDIT #{credit_card}"
+  def valid_credit_card(franchise, credit_card_number)
+    case franchise
+      when 'mastercard', 'visa', 'discover', 'jcb'
+        add_format_error('length') if credit_card_number.size != 16
+      when 'american express'
+        add_format_error('length') if credit_card_number.size != 15
+      when 'dinner club'
+        add_format_error('length') if credit_card_number.size != 14
+    end
   end
 
-  def valid_franchise(franchise)ex
-    p "FRANCHISE #{franchise}"
+  def valid_franchise(credit_card_number)
+    if credit_card_number.present?
+      $contact[:franchise] = case credit_card_number
+        when /^5[1-5][0-9]{5,}|222[1-9][0-9]{3,}|22[3-9][0-9]{4,}|2[3-6][0-9]{5,}|27[01][0-9]{4,}|2720[0-9]{3,}$/#mastercard - 16
+          'mastercard'
+        when /^4[0-9]{6,}$/#visa - 16
+          'visa'
+        when /^3[47][0-9]{5,}$/#americanexpress - 15
+          'american express'
+        when /^3(?:0[0-5]|[68][0-9])[0-9]{4,}$/#dinnersclub - 14
+          'dinner club'
+        when /^6(?:011|5[0-9]{2})[0-9]{3,}$/#discover - 16
+          'discover'
+        when /^(?:2131|1800|35[0-9]{3})[0-9]{3,}$/#jcb - 16
+          'jcb'
+        else
+          'unknow'
+      end
+
+      $contact[:franchise] != 'unknow' ? valid_credit_card($contact[:franchise], credit_card_number) : add_format_error('franchise')
+    else
+      add_blank_error('franchise')
+    end
+
+
   end
 
   def valid_email(email)
-    p "Email #{email}"
+    contact.email = email
+    regex = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
+    email.match(regex)# && current_user.contacts.email
+  end
+
+  def add_blank_error(field)
+    $contact[:errors] << "field #{field} is blank"
+  end
+
+  def add_format_error(field)
+    case field
+      when 'franchise'
+        $contact[:errors] << "unknow franchise"
+      when 'length'
+        $contact[:errors] << "invalid length of credit card number"
+      else
+        $contact[:errors] << "bad format in #{field} field"
+    end
   end
 
 end
