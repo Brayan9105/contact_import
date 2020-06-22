@@ -123,7 +123,7 @@ class Book < ApplicationRecord
       regex = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
       if email.match(regex)
         current_user = User.find(self[:user_id])
-        add_format_error('email_exists') if current_user.contacts.where(email: email).exists?
+        add_format_error('email_exists') if current_user.contacts.where(email: email, is_ok: true).exists?
       else
         add_format_error('email')
       end
