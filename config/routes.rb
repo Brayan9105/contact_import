@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  root 'pages#welcome'
   devise_for :users
-  # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
+  resources :books, only: [:new, :create, :show, :index]
+  get 'books/:id/processing', to: 'books#processing', as: 'processing'
 end
