@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_18_225957) do
+ActiveRecord::Schema.define(version: 2020_06_22_030214) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -42,6 +42,32 @@ ActiveRecord::Schema.define(version: 2020_06_18_225957) do
     t.index ["user_id"], name: "index_books_on_user_id"
   end
 
+  create_table "contacts", force: :cascade do |t|
+    t.string "name"
+    t.string "date"
+    t.string "phone"
+    t.string "address"
+    t.string "credit_card"
+    t.string "card_digit"
+    t.string "franchise"
+    t.string "email"
+    t.boolean "is_ok"
+    t.integer "user_id", null: false
+    t.integer "book_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["book_id"], name: "index_contacts_on_book_id"
+    t.index ["user_id"], name: "index_contacts_on_user_id"
+  end
+
+  create_table "messages", force: :cascade do |t|
+    t.string "description"
+    t.integer "contact_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["contact_id"], name: "index_messages_on_contact_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -57,4 +83,7 @@ ActiveRecord::Schema.define(version: 2020_06_18_225957) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "books", "users"
+  add_foreign_key "contacts", "books"
+  add_foreign_key "contacts", "users"
+  add_foreign_key "messages", "contacts"
 end
