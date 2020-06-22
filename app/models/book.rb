@@ -51,7 +51,6 @@ class Book < ApplicationRecord
     $contact[:date] = date
     if date.present?
       begin
-        # (Date.parse str).strftime("%Y %B %d")
         Date.iso8601(date)
       rescue
         add_format_error('date')
