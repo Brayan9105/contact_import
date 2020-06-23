@@ -157,17 +157,13 @@ class Book < ApplicationRecord
   end
 
   def create_contact(params)
-    p '---------------------------------------'
-    p '---------------------------------------'
     params[:is_ok] = params[:errors].size == 0 ? true : false
-    p params
-
-      contact = self.contacts.create(params.except(:errors))
-      
-      unless params[:is_ok]
-        params[:errors].each do |error|
-          contact.messages.create(description: error)
-        end
+    contact = self.contacts.create(params.except(:errors))
+    
+    unless params[:is_ok]
+      params[:errors].each do |error|
+        contact.messages.create(description: error)
       end
+    end
   end
 end
