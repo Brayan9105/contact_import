@@ -26,7 +26,12 @@ class Book < ApplicationRecord
 
     file = ActiveStorage::Blob.service.path_for(self.file.key)
     CSV.foreach(file, headers: true) do |row|
-      $contact = { errors: [], user_id: self[:user_id] }
+      $contact = { errors: [], name: '', date: '', phone: '', address: '', credit_card: '', franchise: '', email: '', user_id: self[:user_id] }
+      if row.size != 6
+        add_format_error('size')
+        create_contact($contact)
+        break
+      end
 
       fields.each do |field|
           send("valid_#{field}", row[params["#{field}".to_sym].to_i])
@@ -144,12 +149,19 @@ class Book < ApplicationRecord
         $contact[:errors] << "invalid length of credit card number"
       when 'email_exist'
         $contact[:errors] << "another valid contact has this email"
+      when 'size'
+        $contact[:errors] << "this contact does not have the correct number of fields"
       else
         $contact[:errors] << "bad format in #{field} field"
     end
   end
 
   def create_contact(params)
+    p '---------------------------------------'
+    p '---------------------------------------'
+    params[:is_ok] = params[:errors].size == 0 ? true : false
+    p params
+
       contact = self.contacts.create(params.except(:errors))
       
       unless params[:is_ok]
