@@ -1,3 +1,5 @@
+<h1>My Books</h1><br><br>
+
 <%= form_with model: @book do |f| %>
 
 <% if @book.errors.any? %>
@@ -14,5 +16,5 @@
 
   <%= f.label :file %>
   <%= f.file_field :file %><br>
-  <%= f.submit %>
+  <%= f.submit 'Import Book', class: 'btn btn-success' %>
 <% end %>

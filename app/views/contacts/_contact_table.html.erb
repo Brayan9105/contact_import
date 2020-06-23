@@ -1,0 +1,41 @@
+<table class='table'>
+  <tr>
+    <th>Name</th>
+    <th>Date</th>
+    <th>Phone</th>
+    <th>Address</th>
+    <th>Franchise</th>
+    <th>Card Digits</th>
+    <th>Email</th>
+    <th>Valid</th>
+    <th>Options</th>
+  </tr>
+  <% if obj %>
+    <% obj.each do |contact| %>
+      <tr>
+        <% begin %>
+          <td><%= contact.name %></td>
+          <td><%= (Date.parse contact.date).strftime("%Y %B %d") %></td>
+          <td><%= contact.phone %></td>
+          <td><%= contact.address %></td>
+          <td><%= contact.franchise %></td>
+          <td><%= contact.card_digit %></td>
+          <td><%= contact.email %></td>
+        <% rescue %>
+          <td colspan="6">
+            Some fields in this contact has a wrong format that produce erros
+          </td>
+        <% end %>
+        <td>
+          <% if contact.is_ok %> 
+            <span class="badge badge-success"><%= contact.is_ok %></span>
+          <% else %>
+            <span class="badge badge-danger"><%= contact.is_ok %></span>
+          <% end %>
+        </td>
+        <td><%= link_to 'view', contact_path(contact), class: 'btn btn-primary' %></td>
+        
+      </tr>
+    <% end %>
+  <% end %>
+</table>

@@ -1,0 +1,68 @@
+<h2>
+  <%= @contact.name %>
+</h2>
+<h5>
+  Valid contact:
+  <% if @contact.is_ok %> 
+    <span class="badge badge-success"><%= @contact.is_ok %></span>
+  <% else %>
+    <span class="badge badge-danger"><%= @contact.is_ok %></span>
+  <% end %>
+</h5>
+<br><br>
+
+<% begin %>
+<div class="row">
+  <div class="col-md-auto">
+    <h5>Date: </h5>
+    <p><%= (Date.parse @contact.date).strftime("%Y %B %d") %></p>
+
+    <h5>Phone: </h5>
+    <p><%= @contact.phone %></p>
+  </div>
+
+  <div class="col-md-auto">
+    <h5>Address: </h5>
+    <p><%= @contact.address %></p>
+
+    <h5>Email: </h5>
+    <p><%= @contact.email %></p>
+  </div>
+
+  <div class="col-md-auto">
+    <h5>Credit card: </h5>
+    <p><%= @contact.card_digit %></p>
+
+    <h5>Franchise: </h5>
+    <p><%= @contact.franchise %></p>
+  </div>
+
+  <div class="col-md-auto">
+
+    <h5>User: </h5>
+    <p><%= @contact.user.username %></p>
+
+    <h5>Book: </h5>
+    <p><%= (@contact.book.file.filename).to_s.downcase %></p>
+  </div>
+  <% rescue %>
+    <p class="lead">
+      Some fields in this contact has a wrong format that produce erros
+    </p>
+  <% end %>
+</div><br><br>
+
+<% if @contact.messages %>
+  <table class='table'>
+    <tr>
+      <th>#</th>
+      <th>Errors</th>
+    </tr>
+    <% @contact.messages.each_with_index do |message, index| %>
+      <tr>
+        <td><%= index + 1 %></td>
+        <td><%= message.description %></td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>

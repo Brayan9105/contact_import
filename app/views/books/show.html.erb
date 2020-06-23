@@ -1,21 +1,25 @@
-<h1>Books#show</h1>
-<p>Find me in app/views/books/show.html.erb</p>
-<p>
-  <%= @book.user.username %>
-</p>
-<p>
-  <%= url_for(@book.file) %>
-</p>
-<p>
-  <%= @book.status %>
-</p>
-<p>
-  <%= @book.file.content_type %>
-</p>
-
-<p>
-  <%= (@book.file.filename).to_s.downcase %>
-</p>
+<h1><%= (@book.file.filename).to_s.downcase %></h1>
+<table>
+  <tr>
+    <td class="lead pr-5">Created by:</td>
+    <td class="lead">Status:</td>
+  </tr>
+  <tr>
+    <td>
+      <p class="lead">
+        <%= @book.user.username %></td>
+      </p>
+    <td>
+      <p class="lead">
+        <% if @book.status == 'terminado' %> 
+          <span class="badge badge-success"><%= @book.status %></span>
+        <% else %>
+          <span class="badge badge-danger"><%= @book.status %></span>
+        <% end %>
+      </p>
+    </td>
+  </tr>
+</table><br><br>
 
 <% if @book.status == 'espera' %>
   <%= form_with url: processing_path(@book), method: 'GET' do |f| %>
@@ -49,34 +53,5 @@
   <% end %>
 <% end %>
 
-
-    <table>
-      <tr>
-        <th>Name</th>
-        <th>Date</th>
-        <th>Phone</th>
-        <th>Address</th>
-        <th>Franchise</th>
-        <th>Card Digits</th>
-        <th>Email</th>
-        <th>Valid</th>
-      </tr>
-      <% if @book.contacts %>
-        <% @book.contacts.each do |contact| %>
-          <tr>
-            <td><%= contact.name %></td>
-            <td><%= (Date.parse contact.date).strftime("%Y %B %d") %></td>
-            <td><%= contact.phone %></td>
-            <td><%= contact.address %></td>
-            <td><%= contact.franchise %></td>
-            <td><%= contact.card_digit %></td>
-            <td><%= contact.email %></td>
-            <td><%= contact.is_ok %></td>
-            
-            <td></td>
-          </tr>
-        <% end %>
-      <% end %>
-    </table>
-
+<%= render 'contacts/contact_table', obj: @book.contacts %>
 
