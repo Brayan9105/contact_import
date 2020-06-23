@@ -1,0 +1,67 @@
+<h1><%= @user.username %></h1>
+<p><%= @user.email%></p>
+
+<div class="row mb-5">
+  <div class="col">
+    <div class="card">
+      <div class="card-body">
+        <table>
+          <tr>
+            <th><%= link_to 'Books', books_path %></th>
+          </tr>
+          <tr>
+            <th class="pr-4">All</th>
+            <th class="pr-4">Waiting</th>
+            <th class="pr-4">Finished</th>
+            <th class="pr-4">Failed</th>
+          </tr>
+          <tr>
+            <td><%= @user.books.size %></td>
+            <td><%= @books.espera.size %></td>
+            <td><%= @books.terminado.size %></td>
+            <td><%= @books.fallido.size %></td>
+          </tr>
+        </table>  
+      </div>  
+    </div>
+  </div>
+
+  <div class="col">
+    <div class="card">
+      <div class="card-body">
+        <table>
+          <tr>
+            <th><%= link_to 'Contacts', all_contacts_path %></th>
+          </tr>
+          <tr>
+            <th class="pr-4"><%= link_to 'All', all_contacts_path %></th>
+            <th class="pr-4"><%= link_to 'Valid contact', valid_contacts_path %></th>
+            <th class="pr-4"><%= link_to 'Invalid contact', invalid_contacts_path %></th>
+          </tr>
+          <tr>
+            <td><%= @user.contacts.size %></td>
+            <td><%= @valid_contacts.size %></td>
+            <td><%= @invalid_contacts.size %></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mb-5">
+  <div class="col">
+    <h3 class="mb-3">Last 5 books</h3>
+    <%= render 'books/book_table', obj: @user.books.last(5) %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <h3 class="mb-3">Last 5 contacts</h3>
+    <%= render 'contacts/contact_table', obj: @last_contacts %>
+  </div>
+</div>
+
+
+

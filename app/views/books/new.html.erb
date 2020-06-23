@@ -1,3 +1,10 @@
+<h1>My Books</h1><br><br>
+
+<p class="lead">Recomendations to avoid future processing errors</p>
+<p>* Your file must have csv format</p>
+<p>* Your file should have 6 columns</p>
+<p>* Your file should have the next columns (name, date, phone, address, franchise, email) </p>
+<br>
 <%= form_with model: @book do |f| %>
 
 <% if @book.errors.any? %>
@@ -14,5 +21,6 @@
 
   <%= f.label :file %>
   <%= f.file_field :file %><br>
-  <%= f.submit %>
+  <br>
+  <%= f.submit 'Import Book', class: 'btn btn-success' %>
 <% end %>
