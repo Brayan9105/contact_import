@@ -2,27 +2,4 @@
 
 <%= link_to 'Import new book', new_book_path, class: 'btn btn-success mb-3' %>
 
-<table class='table'>
-  <tr class="table-secondary">
-    <th>Filename</th>
-    <th>Status</th>
-    <th>Create at</th>
-    <th>options</th>
-  </tr>
-  <% @books.each do |book| %>
-    <tr>
-      <td><%= link_to book.filename, book_path(book) %></td>
-      <td>
-        <% if book.status == 'terminado' %> 
-          <span class="badge badge-success"><%= book.status %></span>
-        <% elsif book.status == 'espera' %>
-          <span class="badge badge-warning"><%= book.status %></span>          
-        <% else %>
-          <span class="badge badge-danger"><%= book.status %></span>
-        <% end %>
-      </td>
-      <td><%= book.created_at %></td>
-      <td><%= link_to 'view', book_path(book), class: 'btn btn-primary' %></td>
-    </tr>
-  <% end %>
-</table>
+<%= render 'book_table', obj: @books %>
