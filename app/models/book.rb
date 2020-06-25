@@ -40,7 +40,7 @@ class Book < ApplicationRecord
       valid_contact += 1 if $contact[:errors].size == 0
       create_contact($contact)
     end
-    valid_contact > 0 ? self.terminado! : self.fallido!    
+    valid_contact > 0 ? self.terminado! : self.fallido!
   end
 
   def valid_name(name)
