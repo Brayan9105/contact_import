@@ -26,7 +26,6 @@ RSpec.describe 'Books show', type: :feature do
       expect(page).to have_content('Address')
       expect(page).to have_content('Franchise')
       expect(page).to have_content('Email')
-      expect(page).to have_content('Processing')
     end
   end
 end
